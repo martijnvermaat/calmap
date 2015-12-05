@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 
-__version_info__ = ('0', '0', '1')
+__version_info__ = ('0', '0', '2', 'dev')
 __date__ = '5 Dec 2015'
 
 
