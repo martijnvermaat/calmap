@@ -36,8 +36,6 @@ import calmap
 # to 'tight' on the savefig call.
 sys.path.insert(0, os.path.abspath('sphinxext'))
 extensions = [
-    'IPython.sphinxext.ipython_directive',
-    'IPython.sphinxext.ipython_console_highlighting',
     'plot_directive',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
