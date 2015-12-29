@@ -23,7 +23,7 @@ def events():
     return pd.Series(np.random.randn(len(days)), index=days)
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=20)
 def test_yearplot(events):
     """
     By default, `yearplot` plots the first year and sums the values per day.
@@ -32,7 +32,7 @@ def test_yearplot(events):
     return ax.figure
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=20)
 def test_yearplot_year(events):
     """
     We can choose which year is plotted with the `year` keyword argment.
@@ -41,7 +41,7 @@ def test_yearplot_year(events):
     return ax.figure
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=20)
 def test_yearplot_cmap_fillcolor_linewidth(events):
     """
     The appearance can be changed by using another colormap. Here we also use
@@ -51,7 +51,7 @@ def test_yearplot_cmap_fillcolor_linewidth(events):
     return ax.figure
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=20)
 def test_yearplot_monthticks_daylabels_dayticks(events):
     """
     We can ask to draw only every nth label, or explicitely supply the label
@@ -62,7 +62,7 @@ def test_yearplot_monthticks_daylabels_dayticks(events):
     return ax.figure
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=50)
 def test_calendarplot(events):
     """
     With `calendarplot` we can plot several years in one figure.
