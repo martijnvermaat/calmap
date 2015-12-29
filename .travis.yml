@@ -1,0 +1,17 @@
+# Validate this file using http://lint.travis-ci.org/
+language: python
+sudo: false
+cache:
+  directories:
+    - $HOME/.cache/pip
+python:
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+install:
+  - pip install -r tests/requirements.txt
+  - python setup.py install
+script: py.test --mpl
