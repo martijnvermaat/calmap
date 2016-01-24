@@ -225,7 +225,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     return ax
 
 
-def calendarplot(data, how='sum', yearlabels=True, yearlabel_kws=None,
+def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel_kws=None,
                  subplot_kws=None, gridspec_kws=None, fig_kws=None, **kwargs):
     """
     Plot a timeseries as a calendar heatmap.
@@ -240,6 +240,8 @@ def calendarplot(data, how='sum', yearlabels=True, yearlabel_kws=None,
         `Series.resample`.
     yearlabels : bool
        Whether or not to draw the year for each subplot.
+    yearascending : bool
+       Sort the calendar in ascending or descending order.
     yearlabel_kws : dict
        Keyword arguments passed to the matplotlib `set_ylabel` call which is
        used to draw the year for each subplot.
@@ -277,6 +279,8 @@ def calendarplot(data, how='sum', yearlabels=True, yearlabel_kws=None,
     fig_kws = fig_kws or {}
 
     years = np.unique(data.index.year)
+    if not yearascending:
+        years = years[::-1]
 
     fig, axes = plt.subplots(nrows=len(years), ncols=1, squeeze=False,
                              subplot_kw=subplot_kws,
