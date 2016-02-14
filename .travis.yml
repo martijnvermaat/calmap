@@ -26,12 +26,19 @@ before_deploy:
   - git config --global user.email "martijn@vermaat.name"
   - git config --global user.name "Martijn Vermaat"
 deploy:
-  provider: script
-  script: doc/deploy-gh-pages.sh
-  skip_cleanup: true
-  on:
-    tags: true
-    python: "2.7"
+  - provider: script
+    script: doc/deploy-gh-pages.sh
+    skip_cleanup: true
+    on:
+      tags: true
+      python: "2.7"
+  - provider: pypi
+    user: martijnvermaat
+    password:
+      secure: hPSuyetI+FkAzGkDnMlGJBvlDXfZS48y6onsH3cEcl3GN++3R3UsvNYywbJvCty38H3Odg5hjVaDUwxO4ozd0IvaGj/E2KkYrLAUrCeq4VSIp4HCr9jUXwIOWcfJY5gfq7t+xr68LmOlxinc9NOwLwePC49SOdE7Nj4VK8/ajnmUc9/1hlCVsddqs3I8T+soOamhNiJMwe+rDyEY6GI9dANibGxsJYKF5pa9mp1xE/eY4nUMVzXj28mijBIGeZkwzYNEcMvylOXwHu8lb/33JPVympld0s+qTL30Bjww72SlDtkLJwexYhBFCdZ+oPrV8xT8c4czWPwTgstWPAEwsCEW6m5rVwC0/jxclUMYM4CHIvUMUYSDjs4y0JjDo86LyfZqn3Dtiov40NHZbnE3zZvg3uICCxtQB1bbCjgM7QGbiUNK90OdSQU2JFKpWpbtK+c4JR9GlFrQfAOi4dIPEe2Bncws+uA+WbIKDSTm6XvEwiZYckEH6tPQ9v1/Drk28zMygRO9/ydCmtPBT7p6TXJGboPAztIPHs04dLSOl7tdfKp6SqjjBb3beBWTGEqz9unNf92WMIw76nvZC790XzLc7NXuo02JDFwuZIoFAvWbxo56sr0VW2NfPENAuv+vE8AF3jPb5xjOfzqoOPiEP7xlZ8mUm8/idz55ykKz2sU=
+    on:
+      tags: true
+      python: "2.7"
 env:
   global:
     - secure: b/UGfKsNpthU2ob6TyIZVbM5R+7Ivfv0Av06RjTLztnlPIO63VxiIfTaIqCSPOH2F8d93b3BmSqeSTX2vOeHtFAHp4G3X9f+7tdZjaxIN8IWrTwYNMi3Xnlbnr4aubeliXBGDH1Nd4Q45Dm70wChNgurkJ37jfgjuRRGRLchPhypDgstRV2YLH7YnC2R5VcH680/XT2gI1xFORc2spuD52OIEpaCBPx/e//8Cg9tDA4Fe3f531M0gxNwT0ri6mfZgzS6WdTjNmUF7WUiZ2tGCBZuZvur7CGYQmKIO3Psb52gyoLRvHyXTB6/xKbhdoLeiRmXbwmwZbH+rgHYCJ5xs7fu+f5MYcks54iffUme0XoxMz0xUEm/vuCfcGTNgO44oRW6QqviRxpVaPc9bADk7/nJ2lXTPRFvUGLigT6tFo4kMZm+Wu7UxjP1WcMhSEiGnyvlrncnc5Wvg2dljzvWGtNXAFIEUkmsS+JCGtpwDtZdgM6+xhRybM3en2BrQo68YkCEjuTqvhhLcRYc/F7C5rQRXkyUe2bS0ZiwI0PcybZCvQ+Nls5TW+NTRiRXhyYQAxestbJiEnD1gIkFY4p/8lSVBknzi8+0KelRu2fvSQaOPlzkHyjYrkxEIyh5YXLz7SqciDzpxPPIdQui4FVIM1UbJffGFgsrW6SitAr75rQ=
