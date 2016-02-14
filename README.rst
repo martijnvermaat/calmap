@@ -12,7 +12,7 @@ a heatmap per calendar year, similar to GitHub's contributions plot, using
 Usage
 -----
 
-See the `documentation <https://martijnvermaat.github.io/calmap>`_.
+See the `documentation <https://pythonhosted.org/calmap>`_.
 
 
 Installation
