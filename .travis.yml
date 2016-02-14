@@ -33,6 +33,7 @@ deploy:
       tags: true
       python: "2.7"
   - provider: pypi
+    distributions: "sdist bdist_wheel --universal"
     user: martijnvermaat
     password:
       secure: hPSuyetI+FkAzGkDnMlGJBvlDXfZS48y6onsH3cEcl3GN++3R3UsvNYywbJvCty38H3Odg5hjVaDUwxO4ozd0IvaGj/E2KkYrLAUrCeq4VSIp4HCr9jUXwIOWcfJY5gfq7t+xr68LmOlxinc9NOwLwePC49SOdE7Nj4VK8/ajnmUc9/1hlCVsddqs3I8T+soOamhNiJMwe+rDyEY6GI9dANibGxsJYKF5pa9mp1xE/eY4nUMVzXj28mijBIGeZkwzYNEcMvylOXwHu8lb/33JPVympld0s+qTL30Bjww72SlDtkLJwexYhBFCdZ+oPrV8xT8c4czWPwTgstWPAEwsCEW6m5rVwC0/jxclUMYM4CHIvUMUYSDjs4y0JjDo86LyfZqn3Dtiov40NHZbnE3zZvg3uICCxtQB1bbCjgM7QGbiUNK90OdSQU2JFKpWpbtK+c4JR9GlFrQfAOi4dIPEe2Bncws+uA+WbIKDSTm6XvEwiZYckEH6tPQ9v1/Drk28zMygRO9/ydCmtPBT7p6TXJGboPAztIPHs04dLSOl7tdfKp6SqjjBb3beBWTGEqz9unNf92WMIw76nvZC790XzLc7NXuo02JDFwuZIoFAvWbxo56sr0VW2NfPENAuv+vE8AF3jPb5xjOfzqoOPiEP7xlZ8mUm8/idz55ykKz2sU=
