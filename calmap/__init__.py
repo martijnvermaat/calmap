@@ -125,7 +125,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         by_day = data
     else:
         # Sample by day.
-        by_day = data.resample('D', how=how)
+        by_day = data.resample('D').sum()
 
     # Min and max per day.
     if vmin is None:
@@ -291,7 +291,7 @@ def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel
     if how is None:
         by_day = data
     else:
-        by_day = data.resample('D', how=how)
+        by_day = data.resample('D').sum()
 
     ylabel_kws = dict(
         fontsize=32,
