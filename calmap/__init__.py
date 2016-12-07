@@ -72,11 +72,11 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         list, only label months with these indices. If an integer, label every
         n month.
     monthseparator : bool
-        If `True`, adds line between months
+        If `True`, adds line between months.
     separatorwidth : float
-        Width of the month separators
+        Width of the month separators.
     separatorcolor : string
-        Color of the month separators
+        Color of the month separators.
     ax : matplotlib Axes
         Axes in which to draw the plot, otherwise use the currently-active
         Axes.
