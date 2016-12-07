@@ -15,7 +15,7 @@ from matplotlib.colors import ColorConverter, ListedColormap
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
+from distutils.version import StrictVersion
 
 __version_info__ = ('0', '0', '7', 'dev')
 __date__ = '14 Feb 2016'
@@ -25,6 +25,8 @@ __version__ = '.'.join(__version_info__)
 __author__ = 'Martijn Vermaat'
 __contact__ = 'martijn@vermaat.name'
 __homepage__ = 'https://github.com/martijnvermaat/calmap'
+
+_pandas_18 = StrictVersion(pd.__version__) >= StrictVersion('0.18')
 
 
 def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
@@ -125,7 +127,10 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         by_day = data
     else:
         # Sample by day.
-        by_day = data.resample('D', how=how)
+        if _pandas_18:
+            by_day = data.resample('D').agg(how)
+        else:
+            by_day = data.resample('D', how=how)
 
     # Min and max per day.
     if vmin is None:
@@ -291,7 +296,10 @@ def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel
     if how is None:
         by_day = data
     else:
-        by_day = data.resample('D', how=how)
+        if _pandas_18:
+            by_day = data.resample('D').agg(how)
+        else:
+            by_day = data.resample('D', how=how)
 
     ylabel_kws = dict(
         fontsize=32,
