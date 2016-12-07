@@ -9,13 +9,12 @@ similar to GitHub's contributions calendar.
 from __future__ import unicode_literals
 
 import calendar
-import datetime
 
 from matplotlib.colors import ColorConverter, ListedColormap
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
+from distutils.version import StrictVersion
 
 __version_info__ = ('0', '0', '7', 'dev')
 __date__ = '14 Feb 2016'
@@ -26,12 +25,15 @@ __author__ = 'Martijn Vermaat'
 __contact__ = 'martijn@vermaat.name'
 __homepage__ = 'https://github.com/martijnvermaat/calmap'
 
+_pandas_18 = StrictVersion(pd.__version__) >= StrictVersion('0.18')
+
 
 def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
              fillcolor='whitesmoke', linewidth=1, linecolor=None,
              daylabels=calendar.day_abbr[:], dayticks=True,
-             monthlabels=calendar.month_abbr[1:], monthticks=True, ax=None,
-             **kwargs):
+             monthlabels=calendar.month_abbr[1:], monthticks=True,
+             monthseparator=False, separatorwidth=3, separatorcolor='black',
+             ax=None, **kwargs):
     """
     Plot one year from a timeseries as a calendar heatmap.
 
@@ -69,6 +71,12 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         If `True`, label all months. If `False`, don't label months. If a
         list, only label months with these indices. If an integer, label every
         n month.
+    monthseparator : bool
+        If `True`, adds line between months
+    separatorwidth : float
+        Width of the month separators
+    separatorcolor : string
+        Color of the month separators
     ax : matplotlib Axes
         Axes in which to draw the plot, otherwise use the currently-active
         Axes.
@@ -125,7 +133,10 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         by_day = data
     else:
         # Sample by day.
-        by_day = data.resample('D', how=how)
+        if _pandas_18:
+            by_day = data.resample('D').agg(how)
+        else:
+            by_day = data.resample('D', how=how)
 
     # Min and max per day.
     if vmin is None:
@@ -158,7 +169,8 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     by_day = pd.DataFrame({'data': by_day,
                            'fill': 1,
                            'day': by_day.index.dayofweek,
-                           'week': by_day.index.week})
+                           'week': by_day.index.week,
+                           'month': by_day.index.month})
 
     # There may be some days assigned to previous year's last week or
     # next year's first week. We create new week numbers for them so
@@ -183,8 +195,23 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     kwargs['edgecolors'] = linecolor
     ax.pcolormesh(plot_data, vmin=vmin, vmax=vmax, cmap=cmap, **kwargs)
 
-    # Limit heatmap to our data.
-    ax.set(xlim=(0, plot_data.shape[1]), ylim=(0, plot_data.shape[0]))
+    # Limit heatmap to our data. Add a little room for the outside lines (purely esthetic)
+    ax.set(xlim=(-0.3, plot_data.shape[1] + 0.3), ylim=(-0.3, plot_data.shape[0] + 0.3))
+
+    # Draw lines at the start of each month
+    if monthseparator:
+        linekwargs = {'c': separatorcolor, 'lw': separatorwidth, 'ls': '-'}
+        for key, fd in by_day.groupby('month').first().iterrows():
+            x = [fd.week - 1, fd.week - 1, fd.week, fd.week]
+            y = [0, 7 - fd.day, 7 - fd.day, 7]
+            ax.plot(x, y, **linekwargs)
+        last = by_day.iloc[-1]
+        # Draw line at the end of December
+        ax.plot([last.week - 1, last.week - 1, last.week, last.week],
+                [0, 6 - last.day, 6 - last.day, 7], **linekwargs)
+        # Draw upper and lower part of the box
+        ax.plot([1, by_day.week.max()], [7, 7], **linekwargs)
+        ax.plot([0, by_day.week.max() - 1], [0, 0], **linekwargs)
 
     # Square cells.
     ax.set_aspect('equal')
@@ -212,8 +239,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         dayticks = range(len(daylabels))[dayticks // 2::dayticks]
 
     ax.set_xlabel('')
-    ax.set_xticks([by_day.ix[datetime.date(year, i + 1, 15)].week
-                   for i in monthticks])
+    ax.set_xticks(by_day.groupby('month')['week'].mean().values - 0.5)
     ax.set_xticklabels([monthlabels[i] for i in monthticks], ha='center')
 
     ax.set_ylabel('')
@@ -291,7 +317,10 @@ def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel
     if how is None:
         by_day = data
     else:
-        by_day = data.resample('D', how=how)
+        if _pandas_18:
+            by_day = data.resample('D').agg(how)
+        else:
+            by_day = data.resample('D', how=how)
 
     ylabel_kws = dict(
         fontsize=32,
