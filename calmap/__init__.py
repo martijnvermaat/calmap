@@ -28,11 +28,13 @@ __homepage__ = 'https://github.com/martijnvermaat/calmap'
 
 _pandas_18 = StrictVersion(pd.__version__) >= StrictVersion('0.18')
 
+def test_call():
+    return "x marks the spot in here"
 
 def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
              fillcolor='whitesmoke', linewidth=1, linecolor=None,
              daylabels=calendar.day_abbr[:], dayticks=True,
-             monthlabels=calendar.month_abbr[1:], monthticks=True, ax=None,
+             monthlabels=calendar.month_abbr[1:], monthticks=True, ax=None, weekdaysonly=False,
              **kwargs):
     """
     Plot one year from a timeseries as a calendar heatmap.
@@ -74,6 +76,8 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     ax : matplotlib Axes
         Axes in which to draw the plot, otherwise use the currently-active
         Axes.
+    weekdaysonly : boolean
+        If 'True' only show weekdays on plot (removes weekend data)
     kwargs : other keyword arguments
         All other keyword arguments are passed to matplotlib `ax.pcolormesh`.
 
@@ -159,11 +163,15 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     by_day = by_day.reindex(
         pd.date_range(start=str(year), end=str(year + 1), freq='D')[:-1])
 
+
     # Create data frame we can pivot later.
     by_day = pd.DataFrame({'data': by_day,
                            'fill': 1,
                            'day': by_day.index.dayofweek,
                            'week': by_day.index.week})
+
+    # Remove weekend data if week days only flag is true
+    if weekdaysonly : by_day = by_day[ by_day['day'] < 5]
 
     # There may be some days assigned to previous year's last week or
     # next year's first week. We create new week numbers for them so
@@ -208,6 +216,9 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     elif isinstance(monthticks, int):
         monthticks = range(len(monthlabels))[monthticks // 2::monthticks]
 
+    # If week days only is requested, discard weekend labels
+    if weekdaysonly : daylabels = daylabels[:5]
+
     # Get indices for daylabels.
     if dayticks is True:
         dayticks = range(len(daylabels))
@@ -217,13 +228,22 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         dayticks = range(len(daylabels))[dayticks // 2::dayticks]
 
     ax.set_xlabel('')
-    ax.set_xticks([by_day.ix[datetime.date(year, i + 1, 15)].week
-                   for i in monthticks])
+
+    # For labeling the axis with months get location of the 15th
+    # if its in  the index otherwise get the location of the 17th (guaranteed to be there)
+    middates = [ datetime.date(year, i+1 , 15) for i in monthticks ]
+    validmiddates = [ i if i in by_day.index else (i + datetime.timedelta(days=2) ) for i in middates ]
+    tickslocation = [ by_day.ix[i].week for i in validmiddates ]
+
+    ax.set_xticks(tickslocation)
     ax.set_xticklabels([monthlabels[i] for i in monthticks], ha='center')
 
     ax.set_ylabel('')
     ax.yaxis.set_ticks_position('right')
-    ax.set_yticks([6 - i + 0.5 for i in dayticks])
+    # Make sure dayticks are placed at the right height when showing only weekdays
+    if weekdaysonly : weeklength = 4
+    else : weeklength = 6
+    ax.set_yticks([weeklength - i + 0.5 for i in dayticks])
     ax.set_yticklabels([daylabels[i] for i in dayticks], rotation='horizontal',
                        va='center')
 
