@@ -18,7 +18,7 @@ import pandas as pd
 from distutils.version import StrictVersion
 
 __version_info__ = ('0', '0', '7', 'dev')
-__date__ = '14 Feb 2016'
+__date__ = '23 Jul 2018'
 
 
 __version__ = '.'.join(__version_info__)
@@ -33,6 +33,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
              fillcolor='whitesmoke', linewidth=1, linecolor=None,
              daylabels=calendar.day_abbr[:], dayticks=True,
              monthlabels=calendar.month_abbr[1:], monthticks=True, ax=None,
+             start_date=None, end_date=None,
              **kwargs):
     """
     Plot one year from a timeseries as a calendar heatmap.
@@ -74,6 +75,10 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     ax : matplotlib Axes
         Axes in which to draw the plot, otherwise use the currently-active
         Axes.
+    start_date : string
+        Date to start the year plot
+    end_date : string
+        Date to end the year plot
     kwargs : other keyword arguments
         All other keyword arguments are passed to matplotlib `ax.pcolormesh`.
 
@@ -164,7 +169,17 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
                            'fill': 1,
                            'day': by_day.index.dayofweek,
                            'week': by_day.index.week})
-
+    
+    # If there is a truck date we filter the by_day to the 
+    # selected period.
+    if start_date:
+        by_day = by_day[start_date:]
+    
+    if end_date:
+        by_day = by_day[:end_date]
+            
+        
+    
     # There may be some days assigned to previous year's last week or
     # next year's first week. We create new week numbers for them so
     # the ordering stays intact and week/day pairs unique.
@@ -186,6 +201,8 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
     # Draw heatmap.
     kwargs['linewidth'] = linewidth
     kwargs['edgecolors'] = linecolor
+    
+    #kwargs['label'] = by_day.index.day
     ax.pcolormesh(plot_data, vmin=vmin, vmax=vmax, cmap=cmap, **kwargs)
 
     # Limit heatmap to our data.
@@ -215,12 +232,20 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         dayticks = []
     elif isinstance(dayticks, int):
         dayticks = range(len(daylabels))[dayticks // 2::dayticks]
-
+    
     ax.set_xlabel('')
-    ax.set_xticks([by_day.ix[datetime.date(year, i + 1, 15)].week
-                   for i in monthticks])
-    ax.set_xticklabels([monthlabels[i] for i in monthticks], ha='center')
+    
+    # If there is a start_date then we have to change the tick position
+    if start_date:
+         ax.set_xticks([by_day.ix[datetime.date(year, i , 15)].week - pd.to_datetime(start_date).week
+                       for i in set([x.month for x in by_day.index])])
 
+    else:
+        ax.set_xticks([by_day.ix[datetime.date(year, i , 15)].week
+                       for i in set([x.month for x in by_day.index])])
+                       
+
+    ax.set_xticklabels([monthlabels[i-1] for i in set([x.month for x in by_day.index])], ha='center')
     ax.set_ylabel('')
     ax.yaxis.set_ticks_position('right')
     ax.set_yticks([6 - i + 0.5 for i in dayticks])
@@ -231,7 +256,8 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
 
 
 def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel_kws=None,
-                 subplot_kws=None, gridspec_kws=None, fig_kws=None, **kwargs):
+                 subplot_kws=None, gridspec_kws=None, fig_kws=None, start_date=None, end_date=None,
+                 **kwargs):
     """
     Plot a timeseries as a calendar heatmap.
 
@@ -258,6 +284,10 @@ def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel
         to create the grid the subplots are placed on.
     fig_kws : dict
         Keyword arguments passed to the matplotlib `figure` call.
+    start_date : string
+        Date to start the year plot
+    end_date : string
+        Date to end the year plot
     kwargs : other keyword arguments
         All other keyword arguments are passed to `yearplot`.
 
@@ -312,7 +342,7 @@ def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel
     max_weeks = 0
 
     for year, ax in zip(years, axes):
-        yearplot(by_day, year=year, how=None, ax=ax, **kwargs)
+        yearplot(by_day, year=year, how=None, ax=ax, start_date=start_date, end_date=end_date, **kwargs)
         max_weeks = max(max_weeks, ax.get_xlim()[1])
 
         if yearlabels:
