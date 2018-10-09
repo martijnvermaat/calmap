@@ -133,10 +133,15 @@ The plot directive has the following configuration options:
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from matplotlib.externals import six
-from matplotlib.externals.six.moves import xrange
+import six
+from six.moves import xrange
 
-import sys, os, shutil, io, re, textwrap
+import sys
+import os
+import shutil
+import io
+import re
+import textwrap
 from os.path import relpath
 import traceback
 import warnings
@@ -158,10 +163,12 @@ sphinx_version = tuple([int(re.split('[^0-9]', x)[0])
 try:
     # Sphinx depends on either Jinja or Jinja2
     import jinja2
+
     def format_template(template, **kw):
         return jinja2.Template(template).render(**kw)
 except ImportError:
     import jinja
+
     def format_template(template, **kw):
         return jinja.from_string(template, **kw)
 
@@ -183,6 +190,7 @@ __version__ = 2
 #------------------------------------------------------------------------------
 # Registration hook
 #------------------------------------------------------------------------------
+
 
 def plot_directive(name, arguments, options, content, lineno,
                    content_offset, block_text, state, state_machine):
@@ -284,6 +292,7 @@ def setup(app):
 # Doctest handling
 #------------------------------------------------------------------------------
 
+
 def contains_doctest(text):
     try:
         # check if it's valid Python as-is
@@ -329,7 +338,7 @@ def split_code_at_show(text):
     part = []
     for line in text.split("\n"):
         if (not is_doctest and line.strip() == 'plt.show()') or \
-               (is_doctest and line.strip() == '>>> plt.show()'):
+                (is_doctest and line.strip() == '>>> plt.show()'):
             part.append(line)
             parts.append("\n".join(part))
             part = []
@@ -424,7 +433,9 @@ Exception occurred rendering plot.
 # :context: option
 plot_context = dict()
 
+
 class ImageFile(object):
+
     def __init__(self, basename, dirname):
         self.basename = basename
         self.dirname = dirname
@@ -507,7 +518,7 @@ def run_code(code, code_path, ns=None, function_name=None):
             if not ns:
                 if setup.config.plot_pre_code is None:
                     six.exec_(six.text_type("import numpy as np\n" +
-                    "from matplotlib import pyplot as plt\n"), ns)
+                                            "from matplotlib import pyplot as plt\n"), ns)
                 else:
                     six.exec_(six.text_type(setup.config.plot_pre_code), ns)
             ns['print'] = _dummy_print
@@ -556,11 +567,11 @@ def render_figures(code, code_path, output_dir, output_base, context,
     for fmt in plot_formats:
         if isinstance(fmt, six.string_types):
             if ':' in fmt:
-                suffix,dpi = fmt.split(':')
+                suffix, dpi = fmt.split(':')
                 formats.append((str(suffix), int(dpi)))
             else:
                 formats.append((fmt, default_dpi.get(fmt, 80)))
-        elif type(fmt) in (tuple, list) and len(fmt)==2:
+        elif type(fmt) in (tuple, list) and len(fmt) == 2:
             formats.append((str(fmt[0]), int(fmt[1])))
         else:
             raise PlotError('invalid image format "%r" in plot_formats' % fmt)
@@ -746,7 +757,7 @@ def run(arguments, content, options, state_machine, state, lineno):
     dest_dir = os.path.abspath(os.path.join(setup.app.builder.outdir,
                                             source_rel_dir))
     if not os.path.exists(dest_dir):
-        os.makedirs(dest_dir) # no problem here for me, but just use built-ins
+        os.makedirs(dest_dir)  # no problem here for me, but just use built-ins
 
     # how to link to files from the RST file
     dest_dir_link = os.path.join(relpath(setup.confdir, rst_dir),
@@ -775,7 +786,7 @@ def run(arguments, content, options, state_machine, state, lineno):
         reporter = state.memo.reporter
         sm = reporter.system_message(
             2, "Exception occurred in plotting %s\n from %s:\n%s" % (output_base,
-                                                source_file_name, err),
+                                                                     source_file_name, err),
             line=lineno)
         results = [(code, [])]
         errors = [sm]
