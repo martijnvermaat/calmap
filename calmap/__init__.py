@@ -148,7 +148,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         # of course won't work when the axes itself has a transparent
         # background so in that case we default to white which will usually be
         # the figure or canvas background color.
-        linecolor = ax.get_axis_bgcolor()
+        linecolor = ax.get_facecolor()
         if ColorConverter().to_rgba(linecolor)[-1] == 0:
             linecolor = 'white'
 
