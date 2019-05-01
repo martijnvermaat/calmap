@@ -231,7 +231,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
 
 
 def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel_kws=None,
-                 subplot_kws=None, gridspec_kws=None, fig_kws=None, **kwargs):
+                 subplot_kws=None, gridspec_kws=None, fig_kws=None, y_axis_color=None, **kwargs):
     """
     Plot a timeseries as a calendar heatmap.
 
@@ -258,6 +258,8 @@ def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel
         to create the grid the subplots are placed on.
     fig_kws : dict
         Keyword arguments passed to the matplotlib `figure` call.
+    y_axis_color : Matlab Color
+        Passing a color string will change the color of the year label.
     kwargs : other keyword arguments
         All other keyword arguments are passed to `yearplot`.
 
@@ -300,10 +302,10 @@ def calendarplot(data, how='sum', yearlabels=True, yearascending=True, yearlabel
             by_day = data.resample('D').agg(how)
         else:
             by_day = data.resample('D', how=how)
-
+            
     ylabel_kws = dict(
         fontsize=32,
-        color=kwargs.get('fillcolor', 'whitesmoke'),
+        color=y_axis_color,
         fontweight='bold',
         fontname='Arial',
         ha='center')
