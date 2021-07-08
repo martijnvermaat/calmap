@@ -148,7 +148,9 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         # of course won't work when the axes itself has a transparent
         # background so in that case we default to white which will usually be
         # the figure or canvas background color.
-        linecolor = ax.get_axis_bgcolor()
+        linecolor = ax.get_fc()
+        # By: Ryan Susman - "ax.get_axis_bgcolor()" is deprecated, see:
+        # https://matplotlib.org/2.1.2/api/_as_gen/matplotlib.axes.Axes.get_axis_bgcolor.html
         if ColorConverter().to_rgba(linecolor)[-1] == 0:
             linecolor = 'white'
 
@@ -217,8 +219,10 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         dayticks = range(len(daylabels))[dayticks // 2::dayticks]
 
     ax.set_xlabel('')
-    ax.set_xticks([by_day.ix[datetime.date(year, i + 1, 15)].week
+    ax.set_xticks([by_day.loc[datetime.date(year, i + 1, 15).strftime("%Y-%m-%d"), 'week']
                    for i in monthticks])
+    # df.ix is deprecated see:
+    # https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.ix.html
     ax.set_xticklabels([monthlabels[i] for i in monthticks], ha='center')
 
     ax.set_ylabel('')
