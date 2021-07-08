@@ -21,3 +21,5 @@ Installation
 To install the latest release via PyPI using pip::
 
     pip install calmap
+
+Trigger Travis build
