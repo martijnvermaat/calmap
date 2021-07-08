@@ -148,7 +148,9 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         # of course won't work when the axes itself has a transparent
         # background so in that case we default to white which will usually be
         # the figure or canvas background color.
-        linecolor = ax.get_axis_bgcolor()
+        linecolor = ax.get_fc()
+        # By: Ryan Susman - "ax.get_axis_bgcolor()" is deprecated, see:
+        # https://matplotlib.org/2.1.2/api/_as_gen/matplotlib.axes.Axes.get_axis_bgcolor.html
         if ColorConverter().to_rgba(linecolor)[-1] == 0:
             linecolor = 'white'
 
@@ -166,7 +168,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
                            'week': by_day.index.week})
 
     # There may be some days assigned to previous year's last week or
-    # next year's first week. We create new week numbers for them so
+    # next year's fkwsirst week. We create new week numbers for them so
     # the ordering stays intact and week/day pairs unique.
     by_day.loc[(by_day.index.month == 1) & (by_day.week > 50), 'week'] = 0
     by_day.loc[(by_day.index.month == 12) & (by_day.week < 10), 'week'] \
@@ -217,8 +219,10 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         dayticks = range(len(daylabels))[dayticks // 2::dayticks]
 
     ax.set_xlabel('')
-    ax.set_xticks([by_day.ix[datetime.date(year, i + 1, 15)].week
+    ax.set_xticks([by_day.loc[str(year) + '-' + str(i + 1) + '-' + str(15), 'week']
                    for i in monthticks])
+    # df.ix is deprecated see:
+    # https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.ix.html
     ax.set_xticklabels([monthlabels[i] for i in monthticks], ha='center')
 
     ax.set_ylabel('')
