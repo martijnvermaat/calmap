@@ -219,7 +219,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
         dayticks = range(len(daylabels))[dayticks // 2::dayticks]
 
     ax.set_xlabel('')
-    ax.set_xticks([by_day.loc[str(year) + '-' + str(i + 1) + '-' + str(15), 'week']
+    ax.set_xticks([by_day.loc[datetime.date(year, i + 1, 15).strftime("%Y-%m-%d"), 'week']
                    for i in monthticks])
     # df.ix is deprecated see:
     # https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.ix.html
