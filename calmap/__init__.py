@@ -168,7 +168,7 @@ def yearplot(data, year=None, how='sum', vmin=None, vmax=None, cmap='Reds',
                            'week': by_day.index.week})
 
     # There may be some days assigned to previous year's last week or
-    # next year's fkwsirst week. We create new week numbers for them so
+    # next year's first week. We create new week numbers for them so
     # the ordering stays intact and week/day pairs unique.
     by_day.loc[(by_day.index.month == 1) & (by_day.week > 50), 'week'] = 0
     by_day.loc[(by_day.index.month == 12) & (by_day.week < 10), 'week'] \
