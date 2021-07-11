@@ -1,3 +1,5 @@
+| **Note:** See `MarvinT/calmap <https://github.com/MarvinT/calmap/>`_ for the maintained version of the project. That is also the version that gets published to PyPI and it has received several fixes to issues.
+
 Calendar heatmaps from Pandas time series data
 ==============================================
 
